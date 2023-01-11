@@ -1,15 +1,17 @@
-#define MAXN 100010
+#include <bits/stdc++.h>
+using namespace std;
+#define MAXN 100000
 int N;
 int tree[4*MAXN];
 
 int combine(int a, int b) {
     // operation
-    return a + b;
+    return a | b;
 }
 
-void _build(int *A, int idx, int tl, int tr) {
+void _build(string A, int idx, int tl, int tr) {
     if (tl == tr) {
-        tree[idx] = A[tl];
+        tree[idx] = 1 << (A[tl] - 'a');
     }
     else {
         int tm = (tl + tr) / 2;
@@ -20,13 +22,13 @@ void _build(int *A, int idx, int tl, int tr) {
     }
 }
 
-void build(int *A, int N) {
+void build(string A, int N) {
     _build(A, 1, 0, N-1);
 }
 
-void _update(int idx, int tl, int tr, int pos, int val) {
+void _update(int idx, int tl, int tr, int pos, char val) {
     if (tl == tr) {
-        tree[idx] = val;
+        tree[idx] = 1 << (val - 'a');
     }
     else {
         int tm = (tl + tr) / 2;
@@ -41,13 +43,13 @@ void _update(int idx, int tl, int tr, int pos, int val) {
     }
 }
 
-void update(int pos, int val) {
+void update(int pos, char val) {
     _update(1, 0, N-1, pos, val);
 }
 
 int _query(int idx, int tl, int tr, int l, int r) {
     if (l > r) {
-        return INT_MAX;
+        return 0;
     }
     else if (l == tl && r == tr) {
         return tree[idx];
@@ -63,4 +65,36 @@ int _query(int idx, int tl, int tr, int l, int r) {
 
 int query(int l, int r) {
     return _query(1, 0, N-1, l, r);
+}
+
+int main() {
+    ios::sync_with_stdio(0);
+
+    string s;
+    cin >> s;
+    N = s.size();
+
+    build(s, N);
+
+    int q;
+    cin >> q;
+
+    while (q--) {
+        int type;
+        cin >> type;
+
+        if (type == 1) {
+            int pos;
+            char c;
+            cin >> pos >> c;
+            update(pos-1, c);
+        }
+        else {
+            int l, r;
+            cin >> l >> r;
+            cout << __builtin_popcount(query(l-1, r-1)) << "\n";
+        }
+    }
+
+    return 0;
 }
