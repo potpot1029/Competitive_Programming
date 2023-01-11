@@ -1,10 +1,12 @@
+#include <bits/stdc++.h>
+using namespace std;
 #define MAXN 100010
 int N;
 int tree[4*MAXN];
 
 int combine(int a, int b) {
-    // operation
-    return a + b;
+    // minimum
+    return min(a, b);
 }
 
 void _build(int *A, int idx, int tl, int tr) {
@@ -61,6 +63,37 @@ int _query(int idx, int tl, int tr, int l, int r) {
     }
 }
 
-int query(int l, int r) {
+int minimum(int l, int r) {
     return _query(1, 0, N-1, l, r);
+}
+
+int main() {
+    ios::sync_with_stdio(0);
+    int M;
+    cin >> N >> M;
+
+    int A[N];
+    for (int i = 0; i < N; ++i) {
+        cin >> A[i];
+    }
+
+    build(A, N);
+
+    while (M--) {
+        int op;
+        cin >> op;
+
+        if (op == 1) {
+            int i, val;
+            cin >> i >> val;
+            update(i, val);
+        }
+        else {
+            int l, r;
+            cin >> l >> r;
+            cout << minimum(l, r-1) << "\n";
+        }
+    }
+
+    return 0;
 }
