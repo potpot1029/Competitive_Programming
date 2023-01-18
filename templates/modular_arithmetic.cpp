@@ -1,3 +1,5 @@
+#define MOD 1000000007
+
 namespace mod_op {
     long long mpow(long long base, long long exponent) {
         long long res = 1;
