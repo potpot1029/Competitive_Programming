@@ -1,12 +1,12 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define MAXN 100010
+#define MAXN 200010
 int N;
 int tree[4*MAXN];
 
 int combine(int a, int b) {
     // operation
-    return max(a, b);
+    return a + b;
 }
 
 void _build(int *A, int idx, int tl, int tr) {
@@ -47,56 +47,57 @@ void update(int pos, int val) {
     _update(1, 0, N-1, pos, val);
 }
 
-int _query(int idx, int tl, int tr, int x) {
-    if (tree[idx] < x) {
-        return INT_MAX;
+int _query(int idx, int tl, int tr, int l, int r) {
+    if (l > r) {
+        return 0;
     }
-    if (tl == tr) {
-        return tl;
+    else if (l == tl && r == tr) {
+        return tree[idx];
     }
     else {
         int tm = (tl + tr) / 2;
-        int ans = INT_MAX;
-        ans = min(ans, _query(idx*2, tl, tm, x));
-        if (ans != INT_MAX) {
-            return ans;
-        }
-        ans = _query(idx*2+1, tm+1, tr, x);
-        return ans;
+        int left_res = _query(idx*2, tl, tm, l, min(tm, r));
+        int right_res = _query(idx*2+1, tm+1, tr, max(tm+1, l), r);
+
+        return combine(left_res, right_res);
     }
 }
 
-int query(int x) {
-    int res = _query(1, 0, N-1, x);
-    return res == INT_MAX ? -1 : res;
+int query(int l, int r) {
+    return _query(1, 0, N-1, l, r);
 }
 
 int main() {
     ios::sync_with_stdio(0);
     int M;
-    cin >> N >> M;
+    cin >> M;
+    N = 2 * M;
 
     int A[N];
-    for (int i = 0; i < N; ++i) {
-        cin >> A[i];
-    }
-
+    int left[M+1], cnt[M+1];
+    memset(A, 0, sizeof(A));
+    memset(left, -1, sizeof(left));
+    memset(cnt, 0, sizeof(cnt));
     build(A, N);
 
-    while (M--) {
-        int op;
-        cin >> op;
+    for (int i = 0; i < N; ++i) {
+        cin >> A[i];         
+    }
 
-        if (op == 1) {
-            int i, v;
-            cin >> i >> v;
-            update(i, v);
+    // process
+    for (int i = 0; i < N; ++i) {
+        if (left[A[i]] == -1) {
+            left[A[i]] = i;
         }
         else {
-            int x;
-            cin >> x;
-            cout << query(x) << "\n";
+            cnt[A[i]] = query(left[A[i]], i);
+            update(left[A[i]], 1);
         }
+    }
+
+    // output
+    for (int i = 1; i <= M; ++i) {
+        cout << cnt[i] << " \n"[i == M];
     }
     return 0;
 }

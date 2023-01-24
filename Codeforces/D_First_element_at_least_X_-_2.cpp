@@ -47,8 +47,9 @@ void update(int pos, int val) {
     _update(1, 0, N-1, pos, val);
 }
 
-int _query(int idx, int tl, int tr, int x) {
-    if (tree[idx] < x) {
+int _query(int idx, int tl, int tr, int x, int pos) {
+    // cout << "current: " << idx << " " << tl << ", " << tr << "\n";
+    if (tr < pos || tree[idx] < x) {
         return INT_MAX;
     }
     if (tl == tr) {
@@ -57,17 +58,18 @@ int _query(int idx, int tl, int tr, int x) {
     else {
         int tm = (tl + tr) / 2;
         int ans = INT_MAX;
-        ans = min(ans, _query(idx*2, tl, tm, x));
+        // cout << "left:" << tree[idx*2] << " right:" << tree[idx*2+1] << "\n";
+        ans = min(ans, _query(idx*2, tl, tm, x, pos));
         if (ans != INT_MAX) {
             return ans;
         }
-        ans = _query(idx*2+1, tm+1, tr, x);
+        ans = _query(idx*2+1, tm+1, tr, x, pos);
         return ans;
     }
 }
 
-int query(int x) {
-    int res = _query(1, 0, N-1, x);
+int query(int x, int l) {
+    int res = _query(1, 0, N-1, x, l);
     return res == INT_MAX ? -1 : res;
 }
 
@@ -93,9 +95,9 @@ int main() {
             update(i, v);
         }
         else {
-            int x;
-            cin >> x;
-            cout << query(x) << "\n";
+            int x, l;
+            cin >> x >> l;
+            cout << query(x, l) << "\n";
         }
     }
     return 0;
