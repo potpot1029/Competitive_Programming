@@ -1,7 +1,5 @@
-/*
-    Sum Segment Tree
-    Modify for own usage
-*/
+#include <bits/stdc++.h>
+using namespace std;
 #define MAXN 100010
 int N;
 int tree[4*MAXN];
@@ -13,7 +11,13 @@ int combine(int a, int b) {
 
 void _build(int *A, int idx, int tl, int tr) {
     if (tl == tr) {
-        tree[idx] = A[tl];
+        // cout << tl << " " << (tl % 2 == 0) << "\n";
+        if (tl % 2 == 0) {
+            tree[idx] = A[tl];
+        }
+        else {
+            tree[idx] = -A[tl];
+        }
     }
     else {
         int tm = (tl + tr) / 2;
@@ -30,7 +34,13 @@ void build(int *A, int N) {
 
 void _update(int idx, int tl, int tr, int pos, int val) {
     if (tl == tr) {
-        tree[idx] = val;
+        // cout << tl << " " << (tl % 2 == 0) << "\n";
+        if (tl % 2 == 0) {
+            tree[idx] = val;
+        }
+        else {
+            tree[idx] = -val;
+        }
     }
     else {
         int tm = (tl + tr) / 2;
@@ -51,7 +61,7 @@ void update(int pos, int val) {
 
 int _query(int idx, int tl, int tr, int l, int r) {
     if (l > r) {
-        return INT_MAX;
+        return 0;
     }
     else if (l == tl && r == tr) {
         return tree[idx];
@@ -66,5 +76,43 @@ int _query(int idx, int tl, int tr, int l, int r) {
 }
 
 int query(int l, int r) {
-    return _query(1, 0, N-1, l, r);
+    if (l % 2 == 0) {
+        return _query(1, 0, N-1, l, r);
+    }
+    else {
+        return -_query(1, 0, N-1, l, r);
+    }
+}
+
+int main() {
+    ios::sync_with_stdio(0);
+    cin >> N;
+    int A[N];
+    for (int i = 0; i < N; ++i) {
+        cin >> A[i];
+    }
+    build(A, N);
+
+    int M;
+    cin >> M;
+    while (M--) {
+        int op;
+        cin >> op;
+        if (op == 0) {
+            int i, j;
+            cin >> i >> j;
+            i--;
+
+            update(i, j);
+        }
+        else {
+            int l, r;
+            cin >> l >> r;
+            l--, r--;
+
+            cout << query(l, r) << "\n";
+        }
+    }
+    
+    return 0;
 }
