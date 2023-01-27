@@ -51,7 +51,7 @@ void update(int pos, int val) {
 
 int _query(int idx, int tl, int tr, int l, int r) {
     if (l > r) {
-        return INT_MAX;
+        return 0;
     }
     else if (l == tl && r == tr) {
         return tree[idx];
